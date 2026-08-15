@@ -38,6 +38,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun DisableAppsFeatureSettingsSection() {
     ManageDisabledAppsListTile()
+    ExamQuestionBankTile()
     AllowedDailyTimeTile()
     OpenScheduleTile()
     OperationModeTile()
