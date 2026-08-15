@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "questions": [
+    {
+      "topic": "Biology",
+      "prompt": "Which organelle is the main site of aerobic respiration?",
+      "choices": ["Nucleus", "Mitochondrion", "Ribosome", "Golgi apparatus"],
+      "correctIndex": 1,
+      "explanation": "Aerobic respiration primarily occurs in mitochondria."
+    },
+    {
+      "topic": "History",
+      "prompt": "Which factor most directly contributed to the outbreak of World War I in July 1914?",
+      "choices": ["The assassination of Archduke Franz Ferdinand", "The Wall Street Crash", "The Treaty of Versailles", "The Russian Revolution"],
+      "correctIndex": 0,
+      "explanation": "The assassination triggered the July Crisis and the chain of declarations of war."
+    },
+    {
+      "topic": "Chemistry",
+      "prompt": "What happens to the oxidation number of a species when it is oxidised?",
+      "choices": ["It decreases", "It increases", "It becomes zero", "It is unchanged"],
+      "correctIndex": 1,
+      "explanation": "Oxidation is loss of electrons, so oxidation number increases."
+    }
+  ]
+}

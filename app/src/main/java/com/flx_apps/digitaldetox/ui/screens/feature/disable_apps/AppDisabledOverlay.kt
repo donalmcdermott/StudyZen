@@ -1,79 +1,126 @@
 package com.flx_apps.digitaldetox.ui.screens.feature.disable_apps
 
-import androidx.compose.foundation.Image
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flx_apps.digitaldetox.R
+import com.flx_apps.digitaldetox.examgate.ExamGateStore
 import com.flx_apps.digitaldetox.system_integration.OverlayContent
 import com.flx_apps.digitaldetox.system_integration.OverlayService
 import com.flx_apps.digitaldetox.ui.theme.DetoxDroidTheme
 
-class AppDisabledOverlayService : OverlayService(OverlayContent { AppDisabledOverlay() })
+class AppDisabledOverlayService : OverlayService(OverlayContent { AppDisabledOverlay() }) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val result = super.onStartCommand(intent, flags, startId)
+        if (ExamGateStore.isUnlocked(this, runningAppPackageName)) {
+            dismissOverlay()
+        }
+        return result
+    }
+}
 
 /**
- * The overlay that is displayed when the user tries to open a disabled app.
- * When closed, the user will be redirected to the home screen.
+ * ExamGate overlay. A selected app remains covered until the learner answers a question correctly.
+ * Correct answers grant a short per-app unlock and dismiss this overlay without navigating home.
  */
 @Preview
 @Composable
 fun AppDisabledOverlay() {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val service = context as? AppDisabledOverlayService
+    val question = remember { ExamGateStore.nextQuestion(context) }
+    var feedback by remember { mutableStateOf<String?>(null) }
+
     DetoxDroidTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.9f))
-                .padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color.Black.copy(alpha = 0.94f))
+                .padding(horizontal = 28.dp, vertical = 40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Spacer(modifier = Modifier.weight(2f))
             Text(
-                text = stringResource(id = R.string.feature_disableApps_overlay_title),
-                style = MaterialTheme.typography.displayLarge,
+                text = "Quick exam question",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier.padding(vertical = 16.dp)
             )
             Text(
-                text = stringResource(id = R.string.feature_disableApps_overlay_message),
+                text = question.topic,
+                style = MaterialTheme.typography.labelLarge,
+                color = Color.White.copy(alpha = 0.65f),
+                modifier = Modifier.padding(top = 6.dp, bottom = 28.dp),
+            )
+            Text(
+                text = question.prompt,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 color = Color.White,
+                modifier = Modifier.padding(bottom = 24.dp),
             )
-            Text(
-                text = stringResource(id = R.string.feature_disableApps_overlay_message2),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                color = Color.White.copy(alpha = 0.8f),
-                modifier = Modifier.padding(vertical = 32.dp)
-            )
-            OutlinedButton(modifier = Modifier
-                .padding(top = 16.dp)
-                .scale(1.5f), onClick = {
-                (context as OverlayService).closeOverlay()
-            }) {
-                Text(text = stringResource(id = R.string.action_close))
+
+            question.choices.forEachIndexed { index, choice ->
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    onClick = {
+                        if (index == question.correctIndex) {
+                            val packageName = service?.runningAppPackageName.orEmpty()
+                            ExamGateStore.grantUnlock(context, packageName)
+                            service?.dismissOverlay()
+                        } else {
+                            feedback = if (question.explanation.isBlank()) {
+                                "Not quite. Try again."
+                            } else {
+                                "Not quite. ${question.explanation}"
+                            }
+                        }
+                    },
+                ) {
+                    Text(text = choice, textAlign = TextAlign.Center)
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground_cropped),
-                contentDescription = "Logo",
-                modifier = Modifier.size(196.dp)
+
+            feedback?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 18.dp),
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+            Button(onClick = { service?.closeOverlay() }) {
+                Text("Leave app")
+            }
+            Text(
+                text = "Correct answer unlocks this app for 10 minutes.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.55f),
+                modifier = Modifier.padding(top = 20.dp),
             )
         }
     }
