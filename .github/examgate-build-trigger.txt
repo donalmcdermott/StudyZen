@@ -1,0 +1,1 @@
+Trigger ExamGate APK build after enabling GitHub Actions.
