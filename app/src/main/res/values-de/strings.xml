@@ -219,6 +219,19 @@
     <string name="feature_disableApps_overlay_title">Zeit ist um!</string>
     <string name="feature_disableApps_overlay_message">Deine tägliche Bildschirmzeit für diese App ist aufgebraucht.</string>
     <string name="feature_disableApps_overlay_message2">Mach eine Pause und komm morgen wieder.</string>
+    <!-- exam-gate: question overlay and question-bank import shown while an app is blocked -->
+    <string name="feature_disableApps_examGate_title">Kurze Prüfungsfrage</string>
+    <string name="feature_disableApps_examGate_feedback_wrong">Nicht ganz. Versuch es noch einmal.</string>
+    <string name="feature_disableApps_examGate_feedback_wrongWithExplanation">Nicht ganz. %1$s</string>
+    <string name="feature_disableApps_examGate_leaveApp">App verlassen</string>
+    <string name="feature_disableApps_examGate_unlockHint">Eine richtige Antwort entsperrt diese App für %1$d Minuten.</string>
+    <string name="feature_disableApps_examGate_importTitle">Prüfungsfragen importieren</string>
+    <string name="feature_disableApps_examGate_importSubtitle">Wähle eine JSON-Fragebank, erstellt aus deinen eigenen Notizen oder Kursinhalten.</string>
+    <string name="feature_disableApps_examGate_status_loaded">%1$d Fragen geladen</string>
+    <string name="feature_disableApps_examGate_status_imported">%1$d Fragen importiert</string>
+    <string name="feature_disableApps_examGate_status_failed">Import fehlgeschlagen: %1$s</string>
+    <string name="feature_disableApps_examGate_status_failedGeneric">Import fehlgeschlagen: ungültige Fragebank</string>
+    <string name="feature_disableApps_examGate_status_unreadable">Die gewählte Datei konnte nicht gelesen werden</string>
     <!-- endregion -->
 
     <!-- region Feature: Commitment Password -->

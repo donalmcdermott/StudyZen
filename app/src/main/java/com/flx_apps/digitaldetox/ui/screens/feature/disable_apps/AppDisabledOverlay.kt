@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.flx_apps.digitaldetox.R
 import com.flx_apps.digitaldetox.examgate.ExamGateStore
 import com.flx_apps.digitaldetox.system_integration.OverlayContent
 import com.flx_apps.digitaldetox.system_integration.OverlayService
@@ -61,7 +63,7 @@ fun AppDisabledOverlay() {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Quick exam question",
+                text = stringResource(R.string.feature_disableApps_examGate_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -92,9 +94,12 @@ fun AppDisabledOverlay() {
                             service?.dismissOverlay()
                         } else {
                             feedback = if (question.explanation.isBlank()) {
-                                "Not quite. Try again."
+                                context.getString(R.string.feature_disableApps_examGate_feedback_wrong)
                             } else {
-                                "Not quite. ${question.explanation}"
+                                context.getString(
+                                    R.string.feature_disableApps_examGate_feedback_wrongWithExplanation,
+                                    question.explanation,
+                                )
                             }
                         }
                     },
@@ -114,10 +119,13 @@ fun AppDisabledOverlay() {
 
             Spacer(modifier = Modifier.padding(10.dp))
             Button(onClick = { service?.closeOverlay() }) {
-                Text("Leave app")
+                Text(stringResource(R.string.feature_disableApps_examGate_leaveApp))
             }
             Text(
-                text = "Correct answer unlocks this app for 10 minutes.",
+                text = stringResource(
+                    R.string.feature_disableApps_examGate_unlockHint,
+                    ExamGateStore.DEFAULT_UNLOCK_MINUTES,
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.White.copy(alpha = 0.55f),
                 modifier = Modifier.padding(top = 20.dp),

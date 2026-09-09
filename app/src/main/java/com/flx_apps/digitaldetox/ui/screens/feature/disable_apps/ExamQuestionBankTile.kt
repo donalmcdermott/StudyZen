@@ -7,31 +7,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.flx_apps.digitaldetox.R
 import com.flx_apps.digitaldetox.examgate.ExamGateStore
 import com.flx_apps.digitaldetox.ui.widgets.SimpleListTile
 
 @Composable
 fun ExamQuestionBankTile() {
     val context = LocalContext.current
-    val status = remember { mutableStateOf("${ExamGateStore.questionCount(context)} questions loaded") }
+    val status = remember {
+        mutableStateOf(
+            context.getString(
+                R.string.feature_disableApps_examGate_status_loaded,
+                ExamGateStore.questionCount(context),
+            )
+        )
+    }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         kotlin.runCatching {
             val json = context.contentResolver.openInputStream(uri)
                 ?.bufferedReader()
                 ?.use { it.readText() }
-                ?: error("Could not read the selected file")
+                ?: error(context.getString(R.string.feature_disableApps_examGate_status_unreadable))
             ExamGateStore.importQuestionBank(context, json)
         }.onSuccess { count ->
-            status.value = "$count questions imported"
+            status.value = context.getString(
+                R.string.feature_disableApps_examGate_status_imported, count
+            )
         }.onFailure { error ->
-            status.value = "Import failed: ${error.message ?: "invalid question bank"}"
+            status.value = context.getString(
+                R.string.feature_disableApps_examGate_status_failed,
+                error.message
+                    ?: context.getString(R.string.feature_disableApps_examGate_status_failedGeneric),
+            )
         }
     }
 
     SimpleListTile(
-        titleText = "Import exam questions",
-        subtitleText = "Choose a JSON question bank generated from your own notes or course content.",
+        titleText = stringResource(R.string.feature_disableApps_examGate_importTitle),
+        subtitleText = stringResource(R.string.feature_disableApps_examGate_importSubtitle),
         trailing = { Text(status.value) },
         onClick = { launcher.launch(arrayOf("application/json", "text/json", "text/plain")) },
     )
