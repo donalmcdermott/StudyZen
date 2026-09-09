@@ -222,6 +222,19 @@
     <string name="feature_disableApps_overlay_title">Time\'s Up!</string>
     <string name="feature_disableApps_overlay_message">You have used up your daily screen time for this app.</string>
     <string name="feature_disableApps_overlay_message2">Take a break and come back tomorrow.</string>
+    <!-- exam-gate: question overlay and question-bank import shown while an app is blocked -->
+    <string name="feature_disableApps_examGate_title">Quick exam question</string>
+    <string name="feature_disableApps_examGate_feedback_wrong">Not quite. Try again.</string>
+    <string name="feature_disableApps_examGate_feedback_wrongWithExplanation">Not quite. %1$s</string>
+    <string name="feature_disableApps_examGate_leaveApp">Leave app</string>
+    <string name="feature_disableApps_examGate_unlockHint">Correct answer unlocks this app for %1$d minutes.</string>
+    <string name="feature_disableApps_examGate_importTitle">Import exam questions</string>
+    <string name="feature_disableApps_examGate_importSubtitle">Choose a JSON question bank generated from your own notes or course content.</string>
+    <string name="feature_disableApps_examGate_status_loaded">%1$d questions loaded</string>
+    <string name="feature_disableApps_examGate_status_imported">%1$d questions imported</string>
+    <string name="feature_disableApps_examGate_status_failed">Import failed: %1$s</string>
+    <string name="feature_disableApps_examGate_status_failedGeneric">Import failed: invalid question bank</string>
+    <string name="feature_disableApps_examGate_status_unreadable">Could not read the selected file</string>
     <!-- endregion -->
 
     <!-- region Feature: Commitment Password -->

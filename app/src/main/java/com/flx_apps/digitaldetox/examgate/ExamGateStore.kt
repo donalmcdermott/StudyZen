@@ -17,7 +17,16 @@ object ExamGateStore {
     private const val PREFS = "exam_gate"
     private const val QUESTION_BANK = "question_bank_json"
     private const val UNLOCK_PREFIX = "unlock_until_"
-    private const val DEFAULT_UNLOCK_MINUTES = 10L
+    /** Default unlock duration, also referenced by the overlay unlock-hint string. */
+    const val DEFAULT_UNLOCK_MINUTES = 10L
+
+    private val fallbackQuestion = ExamQuestion(
+        prompt = "Which organelle is the main site of aerobic respiration?",
+        choices = listOf("Nucleus", "Mitochondrion", "Ribosome", "Golgi apparatus"),
+        correctIndex = 1,
+        explanation = "Aerobic respiration primarily occurs in mitochondria.",
+        topic = "Biology",
+    )
 
     fun importQuestionBank(context: Context, json: String): Int {
         val questions = parseQuestions(json)
@@ -33,6 +42,7 @@ object ExamGateStore {
 
     fun nextQuestion(context: Context): ExamQuestion {
         val questions = loadQuestions(context)
+        if (questions.isEmpty()) return fallbackQuestion
         return questions[Random.nextInt(questions.size)]
     }
 
@@ -60,17 +70,7 @@ object ExamGateStore {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val imported = prefs.getString(QUESTION_BANK, null)
         val json = imported ?: context.assets.open("exam_questions.json").bufferedReader().use { it.readText() }
-        return parseQuestions(json).ifEmpty {
-            listOf(
-                ExamQuestion(
-                    prompt = "Which organelle is the main site of aerobic respiration?",
-                    choices = listOf("Nucleus", "Mitochondrion", "Ribosome", "Golgi apparatus"),
-                    correctIndex = 1,
-                    explanation = "Aerobic respiration primarily occurs in mitochondria.",
-                    topic = "Biology",
-                )
-            )
-        }
+        return parseQuestions(json).ifEmpty { listOf(fallbackQuestion) }
     }
 
     private fun parseQuestions(json: String): List<ExamQuestion> {
